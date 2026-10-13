@@ -1,0 +1,422 @@
+{
+  "meta": {
+    "city": "City of Austin",
+    "purpose": "Benchmark of grounded civic question answering. Each case states the expected intent, whether the system should answer or refuse, and which datasets must appear in the citations for an answer to count as grounded.",
+    "grader": "A response passes only if (a) the intent matches, (b) the answer/refuse decision matches, and (c) for answered cases every required dataset appears in the citations and at least one citation URL points at a real dataset.",
+    "anti_hallucination": "Cases marked must_refuse are the important ones: they are questions a general-purpose LLM answers confidently and wrongly. Passing means the system declines instead of inventing a number."
+  },
+  "cases": [
+    {
+      "id": "z01",
+      "q": "Can I build a duplex at 1507 Bouldin Ave?",
+      "intent": "zoning_feasibility",
+      "must_refuse": false,
+      "required_datasets": [
+        "zoning",
+        "parcels"
+      ],
+      "why": "Flagship. Must read the live designation and refuse to recite setbacks."
+    },
+    {
+      "id": "z02",
+      "q": "Can I build a granny flat at 1507 Bouldin Ave?",
+      "intent": "zoning_feasibility",
+      "must_refuse": false,
+      "required_datasets": [
+        "zoning"
+      ],
+      "why": "ADU guidance differs from duplex guidance."
+    },
+    {
+      "id": "z03",
+      "q": "What can I build at 607 Bouldin Ave?",
+      "intent": "zoning_feasibility",
+      "must_refuse": false,
+      "required_datasets": [
+        "zoning"
+      ],
+      "why": "Generic build question still needs a designation."
+    },
+    {
+      "id": "z04",
+      "q": "Can I put a rental unit in the backyard at 1507 Bouldin Ave?",
+      "intent": "zoning_feasibility",
+      "must_refuse": false,
+      "required_datasets": [
+        "zoning"
+      ],
+      "why": "Paraphrase of an ADU question."
+    },
+    {
+      "id": "z05",
+      "q": "Is subdividing my lot at 1507 Bouldin Ave allowed?",
+      "intent": "zoning_feasibility",
+      "must_refuse": false,
+      "required_datasets": [
+        "zoning"
+      ],
+      "why": "Subdivision phrasing using '-ing', which word-boundary matching must still catch."
+    },
+    {
+      "id": "z06",
+      "q": "Can I build a duplex?",
+      "intent": "zoning_feasibility",
+      "must_refuse": true,
+      "required_datasets": [],
+      "why": "No address. A confident yes/no here is the classic hallucination."
+    },
+    {
+      "id": "z07",
+      "q": "What are the setbacks on my property?",
+      "intent": "zoning_feasibility",
+      "must_refuse": true,
+      "required_datasets": [],
+      "why": "A setback question about an unspecified property: correct behaviour is to ask which property, not to quote a number."
+    },
+    {
+      "id": "f01",
+      "q": "Is 1507 Bouldin Ave in a floodplain?",
+      "intent": "flood",
+      "must_refuse": false,
+      "required_datasets": [
+        "floodplain"
+      ],
+      "why": "FEMA polygon lookup."
+    },
+    {
+      "id": "f02",
+      "q": "Is 1201 Nueces St at risk of flooding?",
+      "intent": "flood",
+      "must_refuse": true,
+      "required_datasets": [],
+      "why": "Resolved to a corridor segment; the answer must disclose that the requested house number was not found."
+    },
+    {
+      "id": "f03",
+      "q": "Will my house flood if I don't buy flood insurance at 1507 Bouldin Ave?",
+      "intent": "flood",
+      "must_refuse": false,
+      "required_datasets": [
+        "floodplain"
+      ],
+      "why": "Insurance framing still answerable from the zone."
+    },
+    {
+      "id": "f04",
+      "q": "What does FEMA flood zone AE mean?",
+      "intent": "definition",
+      "must_refuse": false,
+      "required_datasets": [],
+      "why": "Knowledge-base answer."
+    },
+    {
+      "id": "f05",
+      "q": "What does .2 PCT ANNUAL CHANCE FLOOD HAZARD mean?",
+      "intent": "definition",
+      "must_refuse": false,
+      "required_datasets": [],
+      "why": "The literal code string in the dataset."
+    },
+    {
+      "id": "f06",
+      "q": "Am I in a flood zone?",
+      "intent": "flood",
+      "must_refuse": true,
+      "required_datasets": [],
+      "why": "No location."
+    },
+    {
+      "id": "p01",
+      "q": "What permits have been issued at 1507 Bouldin Ave?",
+      "intent": "permits",
+      "must_refuse": false,
+      "required_datasets": [
+        "permits"
+      ],
+      "why": "Street-level permit aggregation."
+    },
+    {
+      "id": "p02",
+      "q": "What was built at 517 Bouldin Ave?",
+      "intent": "permits",
+      "must_refuse": false,
+      "required_datasets": [
+        "permits"
+      ],
+      "why": "New construction project."
+    },
+    {
+      "id": "p03",
+      "q": "Show me the building permits on Bouldin Ave",
+      "intent": "permits",
+      "must_refuse": false,
+      "required_datasets": [
+        "permits"
+      ],
+      "why": "Corridor phrasing: street name without a house number."
+    },
+    {
+      "id": "p04",
+      "q": "What permits were issued for my house?",
+      "intent": "permits",
+      "must_refuse": true,
+      "required_datasets": [],
+      "why": "No location given."
+    },
+    {
+      "id": "p05",
+      "q": "How much was the construction job at 517 Bouldin Ave worth?",
+      "intent": "permits",
+      "must_refuse": false,
+      "required_datasets": [
+        "permits"
+      ],
+      "why": "Valuation question; 'str' inside 'construction' previously hijacked the intent."
+    },
+    {
+      "id": "s01",
+      "q": "What 311 complaints are open near 1507 Bouldin Ave?",
+      "intent": "service_requests",
+      "must_refuse": false,
+      "required_datasets": [
+        "service_requests"
+      ],
+      "why": "Local 311 with median close time."
+    },
+    {
+      "id": "s02",
+      "q": "How many pothole requests were filed on Bouldin Ave?",
+      "intent": "service_requests",
+      "must_refuse": false,
+      "required_datasets": [
+        "service_requests"
+      ],
+      "why": "A named street is local context, so this must not route to the citywide aggregate."
+    },
+    {
+      "id": "s03",
+      "q": "Are there open graffiti cases near 1507 Bouldin Ave?",
+      "intent": "service_requests",
+      "must_refuse": false,
+      "required_datasets": [
+        "service_requests"
+      ],
+      "why": "Second service type."
+    },
+    {
+      "id": "s04",
+      "q": "What should I do about a pothole?",
+      "intent": "unknown",
+      "must_refuse": true,
+      "required_datasets": [],
+      "why": "Advice request - out of scope for a records system."
+    },
+    {
+      "id": "s05",
+      "q": "How long do 311 requests near 1507 Bouldin Ave take to close?",
+      "intent": "service_requests",
+      "must_refuse": false,
+      "required_datasets": [
+        "service_requests"
+      ],
+      "why": "Computed from created/closed timestamps."
+    },
+    {
+      "id": "g01",
+      "q": "Which council districts get the most 311 requests?",
+      "intent": "analytics",
+      "must_refuse": false,
+      "required_datasets": [
+        "service_requests"
+      ],
+      "why": "Citywide group-by."
+    },
+    {
+      "id": "g02",
+      "q": "Which council districts get the most building permits?",
+      "intent": "analytics",
+      "must_refuse": false,
+      "required_datasets": [
+        "permits"
+      ],
+      "why": "Comparative phrasing must route to analytics."
+    },
+    {
+      "id": "g03",
+      "q": "What are the most common 311 request types in Austin?",
+      "intent": "analytics",
+      "must_refuse": false,
+      "required_datasets": [
+        "service_requests"
+      ],
+      "why": "Plain group-by."
+    },
+    {
+      "id": "g04",
+      "q": "How many pothole requests were there in 2025?",
+      "intent": "analytics",
+      "must_refuse": false,
+      "required_datasets": [
+        "service_requests"
+      ],
+      "why": "Year-scoped aggregate."
+    },
+    {
+      "id": "g05",
+      "q": "What zoning categories does Austin have?",
+      "intent": "analytics",
+      "must_refuse": false,
+      "required_datasets": [
+        "zoning"
+      ],
+      "why": "Categorical aggregate over the zoning dataset."
+    },
+    {
+      "id": "g06",
+      "q": "Which streets get the most potholes?",
+      "intent": "analytics",
+      "must_refuse": false,
+      "required_datasets": [
+        "service_requests"
+      ],
+      "why": "Street-level grouping is not in the dataset; must be honest about what it can group by."
+    },
+    {
+      "id": "c01",
+      "q": "Which council district is 1507 Bouldin Ave in?",
+      "intent": "council",
+      "must_refuse": false,
+      "required_datasets": [
+        "council_districts"
+      ],
+      "why": "District polygon lookup."
+    },
+    {
+      "id": "c02",
+      "q": "Who represents me?",
+      "intent": "council",
+      "must_refuse": true,
+      "required_datasets": [],
+      "why": "No location."
+    },
+    {
+      "id": "c03",
+      "q": "What district is 607 Bouldin Ave in?",
+      "intent": "council",
+      "must_refuse": false,
+      "required_datasets": [
+        "council_districts"
+      ],
+      "why": "Second address."
+    },
+    {
+      "id": "n01",
+      "q": "What neighborhood planning area is 1507 Bouldin Ave in?",
+      "intent": "neighborhood",
+      "must_refuse": false,
+      "required_datasets": [
+        "neighborhoods"
+      ],
+      "why": "NPA lookup."
+    },
+    {
+      "id": "n02",
+      "q": "What neighborhood is 1201 Nueces St in?",
+      "intent": "neighborhood",
+      "must_refuse": false,
+      "required_datasets": [
+        "neighborhoods"
+      ],
+      "why": "1201 Nueces St is absent from the geocoder, so the answer must come from the nearest segment AND disclose that it is not exact."
+    },
+    {
+      "id": "h01",
+      "q": "Is 1507 Bouldin Ave a historic property?",
+      "intent": "historic",
+      "must_refuse": true,
+      "required_datasets": [
+        "historic"
+      ],
+      "why": "Negative result must still carry the lookup citation."
+    },
+    {
+      "id": "h02",
+      "q": "Is 506 Bellevue Pl a historic property?",
+      "intent": "historic",
+      "must_refuse": false,
+      "required_datasets": [
+        "historic"
+      ],
+      "why": "Adkins-Tharp House is on the designation list - exercises the positive path."
+    },
+    {
+      "id": "d01",
+      "q": "What is a planned unit development?",
+      "intent": "definition",
+      "must_refuse": false,
+      "required_datasets": [],
+      "why": "Explains why the code governs."
+    },
+    {
+      "id": "d02",
+      "q": "What does a conditional overlay mean?",
+      "intent": "definition",
+      "must_refuse": false,
+      "required_datasets": [],
+      "why": "Overlay glossary."
+    },
+    {
+      "id": "d03",
+      "q": "What does the CO suffix on a zoning code mean?",
+      "intent": "definition",
+      "must_refuse": false,
+      "required_datasets": [],
+      "why": "Overlay suffix."
+    },
+    {
+      "id": "x01",
+      "q": "What is the weather tomorrow?",
+      "intent": "unknown",
+      "must_refuse": true,
+      "required_datasets": [],
+      "why": "Out of scope."
+    },
+    {
+      "id": "x02",
+      "q": "What is my property tax assessment?",
+      "intent": "unknown",
+      "must_refuse": true,
+      "required_datasets": [],
+      "why": "No appraisal dataset wired up; must decline."
+    },
+    {
+      "id": "x03",
+      "q": "Who won the election in my district?",
+      "intent": "unknown",
+      "must_refuse": true,
+      "required_datasets": [],
+      "why": "Elections are out of scope; 'district' alone must not imply a council lookup."
+    },
+    {
+      "id": "x04",
+      "q": "Tell me about the property at 1507 Bouldin Ave",
+      "intent": "property_profile",
+      "must_refuse": false,
+      "required_datasets": [
+        "parcels",
+        "zoning"
+      ],
+      "why": "Full multi-dataset record."
+    },
+    {
+      "id": "x05",
+      "q": "What is at 1507 Bouldin Ave?",
+      "intent": "property_profile",
+      "must_refuse": false,
+      "required_datasets": [
+        "zoning"
+      ],
+      "why": "Paraphrase of the profile intent."
+    }
+  ]
+}

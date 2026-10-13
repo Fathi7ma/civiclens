@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>CivicLens - civic answers that show their receipts</title>
+<meta name="description" content="Ask questions about your city and get answers grounded in the city's own open-data records, with a citation you can verify." />
+<link rel="preconnect" href="https://unpkg.com" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<link rel="stylesheet" href="/static/styles.css" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128269;</text></svg>" />
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <div>
+      <h1>CivicLens</h1>
+      <p class="tagline">Civic answers that show their receipts</p>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <span id="cityBadge" class="badge badge-city">City of Austin</span>
+    <a class="badge badge-link" href="/docs" target="_blank" rel="noopener">API</a>
+    <button id="aboutBtn" class="badge badge-btn" type="button">About</button>
+  </div>
+</header>
+
+<main class="layout">
+
+  <!-- ------------------------------------------------ left: conversation -->
+  <section class="panel panel-chat">
+    <div id="thread" class="thread" aria-live="polite"></div>
+
+    <div class="composer">
+      <div class="suggestions" id="suggestions"></div>
+      <form id="askForm" autocomplete="off">
+        <textarea id="questionInput" rows="1" maxlength="500"
+                  placeholder="Ask about an address, a street, or the whole city&hellip;"
+                  aria-label="Your question"></textarea>
+        <button type="submit" id="sendBtn" aria-label="Ask">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <path fill="currentColor" d="M3 20.5v-6l8-2.5v-2l-8-2.5v-6L22 12z"/>
+          </svg>
+        </button>
+      </form>
+      <p class="composer-hint">
+        Tip: include a street address for parcel-level answers. Every number CivicLens gives
+        links to the query that produced it.
+      </p>
+    </div>
+  </section>
+
+  <!-- ----------------------------------------------------- right: evidence -->
+  <aside class="panel panel-evidence">
+    <div class="map-wrap">
+      <div id="map" role="application" aria-label="Map of the location"></div>
+      <div id="mapAttribution" class="map-note"></div>
+    </div>
+
+    <div class="evidence-body">
+      <div class="tabs" role="tablist">
+        <button class="tab is-active" data-tab="citations" role="tab" aria-selected="true">
+          Evidence <span id="citeCount" class="pill">0</span>
+        </button>
+        <button class="tab" data-tab="facts" role="tab" aria-selected="false">Record</button>
+        <button class="tab" data-tab="limits" role="tab" aria-selected="false">
+          Limits <span id="gapCount" class="pill pill-warn">0</span>
+        </button>
+        <button class="tab" data-tab="datasets" role="tab" aria-selected="false">Sources</button>
+      </div>
+
+      <div class="tab-panel is-active" id="panel-citations" role="tabpanel">
+        <p class="panel-intro">
+          Each citation is the exact API query that produced the claim. Open one to run it
+          yourself against the city's open-data portal.
+        </p>
+        <div id="citations"></div>
+      </div>
+
+      <div class="tab-panel" id="panel-facts" role="tabpanel"><div id="facts"></div></div>
+
+      <div class="tab-panel" id="panel-limits" role="tabpanel">
+        <p class="panel-intro">
+          What CivicLens could <em>not</em> establish, and where to go for the rest.
+        </p>
+        <div id="limits"></div>
+      </div>
+
+      <div class="tab-panel" id="panel-datasets" role="tabpanel">
+        <p class="panel-intro">
+          CivicLens answers only from these public datasets. It has no other source.
+        </p>
+        <div id="datasets"></div>
+      </div>
+    </div>
+  </aside>
+</main>
+
+<!-- --------------------------------------------------------------- about -->
+<div id="aboutModal" class="modal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+    <button class="modal-close" id="aboutClose" type="button" aria-label="Close">&times;</button>
+    <h2 id="aboutTitle">How CivicLens works</h2>
+    <ol class="steps">
+      <li><strong>Classify.</strong> The question is matched to an intent and its location
+        resolved to a real map point, using the city's geocoded address dataset.</li>
+      <li><strong>Query.</strong> Typed Socrata queries run against the city's own records.
+        Spatially, <code>intersects</code> is used where available, with a locally verified
+        point-in-polygon fallback.</li>
+      <li><strong>Cite.</strong> Every claim carries the reproducible query URL that
+        produced it. No claim appears without one.</li>
+      <li><strong>Refuse.</strong> When the datasets cannot answer the question, CivicLens
+        says so and names the gap instead of estimating. It will not recite setback or
+        floor-area-ratio numbers from memory, because those live in the code, not in a model.</li>
+    </ol>
+    <div id="healthBox" class="health"></div>
+  </div>
+</div>
+
+<footer class="footer">
+  <span>Built on the City of Austin open-data portal. Map data &copy; OpenStreetMap contributors.</span>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="/static/app.js"></script>
+</body>
+</html>

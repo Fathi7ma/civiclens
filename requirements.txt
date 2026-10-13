@@ -1,0 +1,10 @@
+# CivicLens runtime dependencies.
+# Deliberately small: no compiled geometry stack, no LLM SDK.
+fastapi>=0.110,<1.0
+uvicorn[standard]>=0.27
+requests>=2.31
+pydantic>=2.5,<3.0
+
+# development / tests
+pytest>=7.4
+httpx>=0.26

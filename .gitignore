@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+*.egg-info/
+
+# Runtime cache - regenerated on demand, not source
+data/cache/
+
+# Eval output is committed on purpose (it is the results table).
+# Local scratch
+*.log
+.DS_Store
+.env
